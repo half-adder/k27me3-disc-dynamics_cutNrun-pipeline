@@ -106,6 +106,7 @@ rule all:
 	input:
 		expand("Fastq/{sample}_R{num}_trim.fastq.gz", sample = sampleSheet.baseName, num = ['1','2']),
 		expand("Sam/{sample}_{species}_trim.sam", sample = sampleSheet.baseName, species = combinedGenome),
+		expand("Bam/{sample}_{species}_trim.bam.bai", sample = sampleSheet.baseName, species = combinedGenome),
 		expand("Bam/{sample}_{species}_trim_q5_dupsRemoved.{ftype}", sample = sampleSheet.baseName, species = speciesList, ftype = {"bam", "bam.bai"}),
 		expand("Logs/{sample}_{species}_trim_q5_dupsRemoved_genomeStats.tsv", sample = sampleSheet.baseName, species = combinedGenome),
 		expand("BigWig/{sample}_{species}_trim_q5_dupsRemoved_{fragType}{normType}.{ftype}", sample = sampleSheet.baseName, species = REFGENOME, fragType = fragTypes, normType = normTypeList, ftype = {"bw", "bg"}),
@@ -254,6 +255,18 @@ rule convertToBam:
 	shell:
 		"""
 		samtools view -b {input} > {output}
+		"""
+
+rule indexTrimBam:
+    	input:
+		'Bam/{sample}_{species}_trim.bam'
+	output:
+	    	'Bam/{sample}_{species}_trim.bam.bai'
+	envmodules:
+	    	modules['samtoolsVer']
+	shell:
+	    	"""
+		samtools index {input} {output}
 		"""
 
 rule qFilter:
