@@ -2,7 +2,7 @@
 *.swp
 .snakemake/
 __pycache__/
-sampleInfo.tsv
+#sampleInfo.tsv
 poolSampleSheet.tsv
 sampleSheet.tsv
 cmu
